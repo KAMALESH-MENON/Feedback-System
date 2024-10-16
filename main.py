@@ -4,58 +4,57 @@ from typing import Optional
 
 app = FastAPI()
 
-feedbacks_data = {
-    1 : {
-        "name" : "Kamalesh",
-        "data" : "GRADUATE TRIANEE"
-    }
-}
+feedbacks_data = {}
 
 class Feedback(BaseModel):
-    name : str
-    data : str
+    name: str
+    data: str
 
-class updateFeedback(BaseModel):
-    name : Optional[str] = None
-    data : Optional[str] = None
 
-@app.get("/")
-def Feedback():
-    return {"hi" : "testing"}
+class UpdateFeedback(BaseModel):
+    name: Optional[str] = None
+    data: Optional[str] = None
 
-@app.post("/post/feedback/id")
-def createFeedback(id : int, feedback : Feedback):
+
+@app.post("/feedback/{id}")
+def create_feedback(id: int, feedback: Feedback):
     if id in feedbacks_data:
-        return {"Error" : "Already Exist"}
+        return {"error": "Feedback already exists"}
+
     feedbacks_data[id] = feedback
     return feedbacks_data[id]
 
-@app.get("/get/feedback")
-def getFeedback():
+
+@app.get("/feedbacks")
+def get_feedbacks():
     return feedbacks_data
 
-@app.get("/get/feedback/{id}")
-def getSpecificFeedback(id : int):
+
+@app.get("/feedback/{id}")
+def get_specific_feedback(id: int):
     if id in feedbacks_data:
         return feedbacks_data[id]
-    return {"Error": "Data not available"}
+    return {"error": "Feedback not available"}
 
-@app.put("/put/feedback/{id}")
-def updateFeedback(id : int, feedback : updateFeedback):
+
+@app.put("/feedback/{id}")
+def update_feedback(id: int, feedback: UpdateFeedback):
     if id not in feedbacks_data:
-        return {"Error" : "id does not exist"}
+        return {"error": "Feedback ID does not exist"}
 
-    if feedback.name != None:
+    if feedback.name is not None:
         feedbacks_data[id].name = feedback.name
-    if feedback.data != None:
+
+    if feedback.data is not None:
         feedbacks_data[id].data = feedback.data
 
     return feedbacks_data[id]
 
-@app.delete("/delete/feedback/{id}")
-def deleteFeedback(id : int):
+
+@app.delete("/feedback/{id}")
+def delete_feedback(id: int):
     if id not in feedbacks_data:
-        return {"Error" : "id does not exist"}
-    
+        return {"error": "Feedback ID does not exist"}
+
     del feedbacks_data[id]
-    return {"Message" : "Deleted Successfully"}
+    return {"message": "Deleted successfully"}
