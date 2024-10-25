@@ -4,6 +4,7 @@ import schemas
 import models
 from database import engine, SessionLocal
 from typing import List
+from pytz import timezone
 
 app = FastAPI()
 
@@ -18,13 +19,13 @@ def get_db():
         db.close()
 
 
-@app.get("/feedbacks")
+@app.get("/feedbacks", response_model=List[schemas.DisplayFeedback])
 def get_feedbacks(db: Session = Depends(get_db)):
     feedbacks = db.query(models.Feedback).all()
     return feedbacks
 
 
-@app.post("/feedback")
+@app.post("/feedback", response_model=schemas.DisplayFeedback   )
 def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db)):
     new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text)
     db.add(new_feedback)
@@ -33,16 +34,15 @@ def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db)):
     return new_feedback
 
 
-#@app.get("/feedback/{id}", response_model=schemas.DisplayFeedback)
-@app.get("/feedback/{id}")
+@app.get("/feedback/{id}", response_model=schemas.DisplayFeedback)
 def get_specific_feedback(id: int, db: Session = Depends(get_db)):
     feedback = db.query(models.Feedback).filter(models.Feedback.id == id).first()
-    if feedback:    
+    if feedback:
         return feedback
     return {"error": "Feedback not available"}
 
 
-@app.put("/feedback/{id}")
+@app.put("/feedback/{id}", response_model=schemas.DisplayFeedback)
 def update_feedback(id: int, feedback: schemas.UpdateFeedback, db: Session = Depends(get_db)):
     feedback = db.query(models.Feedback).filter(models.Feedback.id == id).first()
     if feedback:

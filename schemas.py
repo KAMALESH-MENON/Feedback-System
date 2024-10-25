@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
 
 
@@ -12,13 +12,13 @@ class UpdateFeedback(BaseModel):
     name: Optional[str] = None
     feedback_text: Optional[str] = None
 
-#doubt
-# class DisplayFeedback(BaseModel):
-#     id: int
-#     name: str
-#     feedback_text: str
-#     created_at: datetime
-#     updated_at: datetime
+
+class DisplayFeedback(BaseModel):
+    id: int
+    name: str
+    feedback_text: str
+    created_at: Union[datetime, None]  
+    updated_at: Union[datetime, None] 
     
-#     class config:
-#         orm_mode = True
+    class Config:
+        orm_mode = True
