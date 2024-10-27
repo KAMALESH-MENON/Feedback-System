@@ -4,4 +4,3 @@ sqlalchemy
 pydantic 
 pytz
 datetime
-python-dotenv
