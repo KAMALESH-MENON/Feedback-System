@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-import schemas
-import models
-from database import engine, SessionLocal
+import src.schemas as schemas
+import src.models as models
+from src.database import engine
+from src.database import SessionLocal
 from typing import List
-from pytz import timezone
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ def get_feedbacks(db: Session = Depends(get_db)):
     return feedbacks
 
 
-@app.post("/feedback", response_model=schemas.DisplayFeedback   )
+@app.post("/feedback", response_model=schemas.DisplayFeedback)
 def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db)):
     new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text)
     db.add(new_feedback)

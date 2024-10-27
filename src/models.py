@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
-from database import Base
+from src.database import Base
 import pytz 
 
 INDIAN_TIMEZONE = pytz.timezone('Asia/Kolkata')
