@@ -1,4 +1,3 @@
-
 # Feedback System
 
 This project is a feedback management system built using FastAPI, SQLAlchemy, and Pydantic.
