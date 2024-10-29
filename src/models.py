@@ -13,3 +13,12 @@ class Feedback(Base):
     feedback_text = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), default=datetime.now(INDIAN_TIMEZONE)) 
     updated_at = Column(DateTime(timezone=True), onupdate=datetime.now(INDIAN_TIMEZONE))
+
+
+class UserCredential(Base):
+    __tablename__ = 'user_credential'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    password = Column(String, nullable=False)

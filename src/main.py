@@ -9,6 +9,7 @@ import src.models as models
 from src.database import engine
 from src.database import SessionLocal
 from typing import List
+from hashlib import sha256
 
 app = FastAPI()
 
@@ -26,7 +27,7 @@ def get_db():
 def get_feedbacks( response: Response, db: Session = Depends(get_db)):
     feedbacks = db.query(models.Feedback).all()
     if not feedbacks:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Feedback not available")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empty Database")
     return feedbacks
 
 
@@ -69,3 +70,14 @@ def delete_feedback(id: int, response: Response, db: Session = Depends(get_db)):
         db.commit()
         return {"message": "Deleted successfully"}
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Feedback not available")
+
+
+@app.post("/user", response_model=schemas.DiaplayUser, status_code=status.HTTP_201_CREATED)
+def create_user(user: schemas.User, db: Session = Depends(get_db)):
+    encrpted_password = sha256(user.password.encode('utf-8')).hexdigest()
+    
+    new_user = models.UserCredential(name=user.name, email=user.email, password=encrpted_password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
