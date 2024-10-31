@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional, Union
 from datetime import datetime
 
@@ -21,12 +21,12 @@ class DisplayFeedback(BaseModel):
     updated_at: Union[datetime, None] 
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class User(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     password: str
 
 
@@ -34,4 +34,4 @@ class DiaplayUser(User):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
