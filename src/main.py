@@ -33,7 +33,7 @@ def get_feedbacks(db: Session = Depends(get_db)):
 
 @app.post("/feedback", response_model=schemas.DisplayFeedback, status_code=status.HTTP_201_CREATED)
 def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db)):
-    new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text, user_id=1)
+    new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text, user_id=feedback.id)
     db.add(new_feedback)
     db.commit()
     db.refresh(new_feedback)

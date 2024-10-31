@@ -6,6 +6,7 @@ from datetime import datetime
 class Feedback(BaseModel):
     name: str
     feedback_text: str
+    id: int
 
 
 class UpdateFeedback(BaseModel):
