@@ -23,12 +23,12 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/feedbacks", response_model=List[schemas.DisplayFeedback])
-def get_feedbacks( response: Response, db: Session = Depends(get_db)):
+@app.get("/feedback", response_model=List[schemas.DisplayFeedback])
+def get_feedbacks(db: Session = Depends(get_db)):
     feedbacks = db.query(models.Feedback).all()
-    if not feedbacks:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empty Database")
-    return feedbacks
+    if feedbacks:
+        return feedbacks
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empty Database")
 
 
 @app.post("/feedback", response_model=schemas.DisplayFeedback, status_code=status.HTTP_201_CREATED)
