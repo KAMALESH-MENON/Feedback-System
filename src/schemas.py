@@ -13,17 +13,6 @@ class UpdateFeedback(BaseModel):
     feedback_text: Optional[str] = None
 
 
-class DisplayFeedback(BaseModel):
-    id: int
-    name: str
-    feedback_text: str
-    created_at: Union[datetime, None]  
-    updated_at: Union[datetime, None] 
-    
-    class Config:
-        orm_mode = True
-
-
 class User(BaseModel):
     name: str
     email: str
@@ -32,6 +21,18 @@ class User(BaseModel):
 
 class DiaplayUser(User):
     id: int
+    
+    class Config:
+        orm_mode = True
+
+
+class DisplayFeedback(BaseModel):
+    id: int
+    name: str
+    feedback_text: str
+    created_at: Union[datetime, None]  
+    updated_at: Union[datetime, None] 
+    user: DiaplayUser
     
     class Config:
         orm_mode = True
