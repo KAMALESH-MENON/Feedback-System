@@ -25,19 +25,24 @@ def get_feedbacks(db: Session = Depends(get_db), current_user: schemas.User = De
 
 
 @router.post("", response_model=schemas.DisplayFeedback, status_code=status.HTTP_201_CREATED)
-def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db)):
-    existing_user = db.query(models.UserCredential).filter(models.UserCredential.id==feedback.id).first()
+def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db),
+                    current_user: schemas.User = Depends(get_current_user)
+                    ):
+    existing_user = db.query(models.UserCredential).filter(
+                            models.UserCredential.id==feedback.id).first()
     if existing_user:
         new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text, user_id=feedback.id)
         db.add(new_feedback)
         db.commit()
         db.refresh(new_feedback)
         return new_feedback
-    raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Given User_id does not exist. Add the User first.")
+    raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, 
+                        detail="Given User_id does not exist. Add the User first.")
 
 
 @router.get("/{id}", response_model=schemas.DisplayFeedback)
-def get_specific_feedback(id: int, response: Response, db: Session = Depends(get_db)):
+def get_specific_feedback(id: int, response: Response, db: Session = Depends(get_db),
+                          current_user: schemas.User = Depends(get_current_user)):
     feedback = db.query(models.Feedback).filter(models.Feedback.id == id).first()
     if feedback:
         return feedback 
@@ -45,7 +50,8 @@ def get_specific_feedback(id: int, response: Response, db: Session = Depends(get
 
 
 @router.put("/{id}", response_model=schemas.DisplayFeedback)
-def update_feedback(id: int, response: Response, update_feedback: schemas.UpdateFeedback, db: Session = Depends(get_db)):
+def update_feedback(id: int, response: Response, update_feedback: schemas.UpdateFeedback, 
+                    db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     feedback = db.query(models.Feedback).filter(models.Feedback.id == id).first()
     if feedback:
         if feedback.name is not None:
@@ -59,7 +65,8 @@ def update_feedback(id: int, response: Response, update_feedback: schemas.Update
 
 
 @router.delete("/{id}")
-def delete_feedback(id: int, response: Response, db: Session = Depends(get_db)):
+def delete_feedback(id: int, response: Response, db: Session = Depends(get_db),
+                    current_user: schemas.User = Depends(get_current_user)):
     feedback = db.query(models.Feedback).filter(models.Feedback.id == id).first()
     if feedback:
         db.delete(feedback)

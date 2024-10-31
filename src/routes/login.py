@@ -39,11 +39,7 @@ def login(request: OAuth2PasswordRequestForm=Depends(), db: Session=Depends(get_
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Username not found")
     if not sha256_crypt.verify(request.password, user.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid password")
-    
-    access_token = generate_token(
-        data={"sub": user.name}
-    )
-    
+    access_token = generate_token(data={"sub": user.name})
     return {"access_token": access_token, "token_type": "Bearer"}
 
 
