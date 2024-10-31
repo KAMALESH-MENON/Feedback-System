@@ -5,3 +5,5 @@ pydantic
 pytz
 datetime
 passlib
+python-jose
+python-multipart
