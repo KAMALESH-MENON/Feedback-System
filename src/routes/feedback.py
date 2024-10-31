@@ -8,6 +8,7 @@ import src.schemas as schemas
 import src.models as models
 from src.database import get_db
 from typing import List
+from src.routes.login import get_current_user
 
 router = APIRouter(
     tags=['Feedback'],
@@ -16,7 +17,7 @@ router = APIRouter(
 
 
 @router.get("", response_model=List[schemas.DisplayFeedback])
-def get_feedbacks(db: Session = Depends(get_db)):
+def get_feedbacks(db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     feedbacks = db.query(models.Feedback).all()
     if feedbacks:
         return feedbacks

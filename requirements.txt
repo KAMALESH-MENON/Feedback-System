@@ -4,3 +4,5 @@ sqlalchemy
 pydantic 
 pytz
 datetime
+python-jose
+python-multipart

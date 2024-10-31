@@ -13,6 +13,7 @@ class UpdateFeedback(BaseModel):
     name: Optional[str] = None
     feedback_text: Optional[str] = None
 
+
 class User(BaseModel):
     name: str
     email: EmailStr
@@ -41,3 +42,12 @@ class DisplayFeedback(BaseModel):
 class Login(BaseModel):
     username: str
     password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
