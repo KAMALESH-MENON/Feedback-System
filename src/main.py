@@ -33,11 +33,14 @@ def get_feedbacks(db: Session = Depends(get_db)):
 
 @app.post("/feedback", response_model=schemas.DisplayFeedback, status_code=status.HTTP_201_CREATED, tags=['Feedback'])
 def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db)):
-    new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text, user_id=feedback.id)
-    db.add(new_feedback)
-    db.commit()
-    db.refresh(new_feedback)
-    return new_feedback
+    existing_user = db.query(models.UserCredential).filter(models.UserCredential.id==feedback.id).first()
+    if existing_user:
+        new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text, user_id=feedback.id)
+        db.add(new_feedback)
+        db.commit()
+        db.refresh(new_feedback)
+        return new_feedback
+    raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Given User_id does not exist. Add the User first.")
 
 
 @app.get("/feedback/{id}", response_model=schemas.DisplayFeedback, tags=['Feedback'])
@@ -49,13 +52,13 @@ def get_specific_feedback(id: int, response: Response, db: Session = Depends(get
 
 
 @app.put("/feedback/{id}", response_model=schemas.DisplayFeedback, tags=['Feedback'])
-def update_feedback(id: int, response: Response, feedback: schemas.UpdateFeedback, db: Session = Depends(get_db)):
+def update_feedback(id: int, response: Response, update_feedback: schemas.UpdateFeedback, db: Session = Depends(get_db)):
     feedback = db.query(models.Feedback).filter(models.Feedback.id == id).first()
     if feedback:
         if feedback.name is not None:
-            feedback.name = feedback.name
+            feedback.name = update_feedback.name
         if feedback.feedback_text is not None:
-            feedback.feedback_text = feedback.feedback_text
+            feedback.feedback_text = update_feedback.feedback_text
         db.commit()
         db.refresh(feedback)
         return feedback
