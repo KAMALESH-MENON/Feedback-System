@@ -31,7 +31,9 @@ def create_feedback(feedback: schemas.Feedback, db: Session = Depends(get_db),
     existing_user = db.query(models.UserCredential).filter(
                             models.UserCredential.id==feedback.id).first()
     if existing_user:
-        new_feedback = models.Feedback(name=feedback.name, feedback_text=feedback.feedback_text, user_id=feedback.id)
+        new_feedback = models.Feedback(name=feedback.name,
+                                       feedback_text=feedback.feedback_text,
+                                       user_id=feedback.id)
         db.add(new_feedback)
         db.commit()
         db.refresh(new_feedback)
