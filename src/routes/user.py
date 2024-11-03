@@ -3,10 +3,10 @@ from fastapi import Depends
 from fastapi import status
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-import src.schemas as schemas
-import src.models as models
-from src.database import get_db
 from passlib.hash import sha256_crypt
+from src.database import get_db
+from src import schemas
+from src import models
 
 router = APIRouter(
     tags=['User Credentials'],
@@ -16,10 +16,11 @@ router = APIRouter(
 
 @router.post("", response_model=schemas.DiaplayUser, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.User, db: Session = Depends(get_db)):
+    """Adds User Credentials in the database"""
     email = db.query(models.UserCredential).filter(models.UserCredential.email==user.email).first()
     if not email:
         encrpted_password = sha256_crypt.hash(user.password)
-        new_user = models.UserCredential(name=user.name, 
+        new_user = models.UserCredential(name=user.name,
                                          email=user.email, password=encrpted_password)
         db.add(new_user)
         db.commit()
@@ -29,8 +30,9 @@ def create_user(user: schemas.User, db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}")
-def delete_user(id: int, db: Session = Depends(get_db)):
-    user = db.query(models.UserCredential).filter(models.UserCredential.id==id).first()
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    """Deletes User Credentials in database"""
+    user = db.query(models.UserCredential).filter(models.UserCredential.id==user_id).first()
     if user:
         db.delete(user)
         db.commit()

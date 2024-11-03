@@ -5,8 +5,8 @@ from src.database import get_db
 from fastapi import status
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-import src.schemas as schemas
-import src.models as models
+from src import schemas
+from src import models
 from passlib.hash import sha256_crypt
 from datetime import datetime
 from datetime import timedelta
@@ -25,6 +25,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 def generate_token(data: dict):
+    """Generates JWT token"""
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
@@ -34,6 +35,7 @@ def generate_token(data: dict):
 
 @router.post("")
 def login(request: OAuth2PasswordRequestForm=Depends(), db: Session=Depends(get_db)):
+    """Authenticate User and creates access token by calling generate_token function"""
     user = db.query(models.UserCredential).filter(models.UserCredential.name==request.username).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Username not found")
@@ -44,6 +46,7 @@ def login(request: OAuth2PasswordRequestForm=Depends(), db: Session=Depends(get_
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
+    """Extracts and verifies the current user from a JWT token"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid auth credentials",
