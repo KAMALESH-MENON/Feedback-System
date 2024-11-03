@@ -1,25 +1,16 @@
-from fastapi import APIRouter
-from fastapi import APIRouter
-from fastapi import Depends
-from src.database import get_db
-from fastapi import status
-from sqlalchemy.orm import Session
-from fastapi import HTTPException
-from src import schemas
-from src import models
-from passlib.hash import sha256_crypt
-from datetime import datetime
-from datetime import timedelta
-import src.config as config
-from jose import jwt
-from jose import JWTError
+from datetime import datetime, timedelta
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.hash import sha256_crypt
+from sqlalchemy.orm import Session
 
-router = APIRouter(
-    tags=["Login"],
-    prefix="/login"
-)
+from src import models, schemas, config
+from src.database import get_db
+
+router = APIRouter(tags=["Login"], prefix="/login")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -34,13 +25,23 @@ def generate_token(data: dict):
 
 
 @router.post("")
-def login(request: OAuth2PasswordRequestForm=Depends(), db: Session=Depends(get_db)):
+def login(
+    request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+):
     """Authenticate User and creates access token by calling generate_token function"""
-    user = db.query(models.UserCredential).filter(models.UserCredential.name==request.username).first()
+    user = (
+        db.query(models.UserCredential)
+        .filter(models.UserCredential.name == request.username)
+        .first()
+    )
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Username not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Username not found"
+        )
     if not sha256_crypt.verify(request.password, user.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid password")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid password"
+        )
     access_token = generate_token(data={"sub": user.name})
     return {"access_token": access_token, "token_type": "Bearer"}
 
@@ -50,11 +51,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid auth credentials",
-        headers={'WWW-Authenticate': "Bearer"}
+        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
-        username: str = payload.get('sub')
+        username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = schemas.TokenData(username=username)
