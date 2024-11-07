@@ -1,8 +1,10 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
 from datetime import datetime
-from src.database import Base
+
 import pytz
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from src.database import Base
 
 INDIAN_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
