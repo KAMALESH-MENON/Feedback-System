@@ -22,9 +22,8 @@ def get_feedbacks(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empty Database")
 
 
-@router.post(
-    "/feedback", response_model=schemas.DisplayFeedback, status_code=status.HTTP_201_CREATED
-)
+@router.post("/feedback", response_model=schemas.DisplayFeedback, 
+             status_code=status.HTTP_201_CREATED)
 def create_feedback(
     feedback: schemas.Feedback,
     db: Session = Depends(get_db),

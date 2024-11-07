@@ -25,9 +25,8 @@ def generate_token(data: dict):
 
 
 @router.post("/login")
-def login(
-    request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
-):
+def login(request: OAuth2PasswordRequestForm = Depends(), 
+          db: Session = Depends(get_db)):
     """Authenticate User and creates access token by calling generate_token function"""
     user = (
         db.query(models.UserCredential)
