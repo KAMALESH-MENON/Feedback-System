@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from src import models, schemas, config
 from src.database import get_db
 
-router = APIRouter(tags=["Login"], prefix="/login")
+router = APIRouter(tags=["Login"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -24,10 +24,9 @@ def generate_token(data: dict):
     return encoded_jwt
 
 
-@router.post("")
-def login(
-    request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
-):
+@router.post("/login")
+def login(request: OAuth2PasswordRequestForm = Depends(), 
+          db: Session = Depends(get_db)):
     """Authenticate User and creates access token by calling generate_token function"""
     user = (
         db.query(models.UserCredential)

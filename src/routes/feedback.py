@@ -7,10 +7,10 @@ from src import models, schemas
 from src.database import get_db
 from src.routes.login import get_current_user
 
-router = APIRouter(tags=["Feedback"], prefix="/feedback")
+router = APIRouter(tags=["Feedback"])
 
 
-@router.get("", response_model=List[schemas.DisplayFeedback])
+@router.get("/feedback", response_model=List[schemas.DisplayFeedback])
 def get_feedbacks(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_current_user),
@@ -22,9 +22,8 @@ def get_feedbacks(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empty Database")
 
 
-@router.post(
-    "", response_model=schemas.DisplayFeedback, status_code=status.HTTP_201_CREATED
-)
+@router.post("/feedback", response_model=schemas.DisplayFeedback, 
+             status_code=status.HTTP_201_CREATED)
 def create_feedback(
     feedback: schemas.Feedback,
     db: Session = Depends(get_db),
@@ -52,7 +51,7 @@ def create_feedback(
     )
 
 
-@router.get("/{id}", response_model=schemas.DisplayFeedback)
+@router.get("/feedback/{id}", response_model=schemas.DisplayFeedback)
 def get_specific_feedback(
     user_id: int,
     db: Session = Depends(get_db),
@@ -67,7 +66,7 @@ def get_specific_feedback(
     )
 
 
-@router.put("/{id}", response_model=schemas.DisplayFeedback)
+@router.put("/feedback/{id}", response_model=schemas.DisplayFeedback)
 def update_feedback(
     user_id: int,
     update_feedback: schemas.UpdateFeedback,
@@ -89,7 +88,7 @@ def update_feedback(
     )
 
 
-@router.delete("/{id}")
+@router.delete("/feedback/{id}")
 def delete_feedback(
     user_id: int,
     db: Session = Depends(get_db),

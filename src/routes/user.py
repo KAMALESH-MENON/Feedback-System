@@ -4,12 +4,10 @@ from passlib.hash import sha256_crypt
 from src.database import get_db
 from src import models, schemas
 
-router = APIRouter(tags=["User Credentials"], prefix="/user")
+router = APIRouter(tags=["User Credentials"])
 
 
-@router.post(
-    "", response_model=schemas.DiaplayUser, status_code=status.HTTP_201_CREATED
-)
+@router.post("/user", response_model=schemas.DiaplayUser, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.User, db: Session = Depends(get_db)):
     """Adds User Credentials in the database"""
     email = (
@@ -31,7 +29,7 @@ def create_user(user: schemas.User, db: Session = Depends(get_db)):
     )
 
 
-@router.delete("/{id}")
+@router.delete("/user/{id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     """Deletes User Credentials in database"""
     user = (
@@ -46,3 +44,10 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="User not available"
     )
+
+
+@router.get("/user",  status_code=status.HTTP_200_OK)
+def display_user(db: Session = Depends(get_db)):
+    """Gets all Users and from the database"""
+    users =  db.query(models.UserCredential).all()
+    return users
