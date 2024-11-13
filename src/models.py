@@ -29,3 +29,10 @@ class UserCredential(Base):
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
     feedbacks = relationship("Feedback", back_populates="user")
+
+class Testing(Base):
+    __tablename__ = "testing"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
